@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.0;
+pragma abicoder v2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -43,7 +44,7 @@ contract Library is Ownable {
     }
 
     function borrowBook(uint256 _identifier) external {
-        require(!isBorrowed[msg.sender][_identifier] == true, "Book is already borrowed.");
+        require(!isBorrowed[msg.sender][_identifier] == true, "Book is already borrowed from the same user.");
         Book storage book = BookStorage[_identifier];
         require(book.numberOfCopies > 0, "There are no copies of this book left.");
         isBorrowed[msg.sender][_identifier] = true;

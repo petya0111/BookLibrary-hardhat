@@ -9,12 +9,12 @@ async function deployLibraryContract(_privateKey) {
 
     const bookLibrary = await ethers.getContractFactory("Library", wallet); // Get the contract factory with the signer from the wallet created
     const bookLibraryContract = await bookLibrary.deploy();
-    const testResults = await hre.run('test', {
-        address: bookLibraryContract.address,
-        constructorArguments: [
-        ],
-    });
-    await hre.run('print', { message: testResults })
+    // const testResults = await hre.run('test', {
+    //     address: bookLibraryContract.address,
+    //     constructorArguments: [
+    //     ],
+    // });
+    // await hre.run('print', { message: testResults.toString() })
     console.log('Waiting for bookLibrary deployment...');
     await bookLibraryContract.deployed();
 
@@ -25,7 +25,7 @@ async function deployLibraryContract(_privateKey) {
         constructorArguments: [
         ],
     });
-    await hre.run('print', { message: verification })
+    await hre.run('print', { message: verification.toString() });
 }
 
 module.exports = deployLibraryContract;

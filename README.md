@@ -22,9 +22,9 @@ Run local network with test accounts
 npx hardhat node
 ```
 
-Run tests with high coverage. 
+Run tests with high coverage. For example on localhost network after you have run local node.
 ```shell
-npx hardhat test
+npx hardhat test --network localhost
 ```
 
 Test deploying on testnet networks

@@ -6,6 +6,9 @@ require("dotenv").config()
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
+  paths: {
+    artifacts: "./build",
+  },
   solidity: {
     version: "0.8.0",
     settings: {
@@ -15,10 +18,14 @@ module.exports = {
       },
     },
   },
-  defaultNetwork: 'goerli',
+  defaultNetwork: 'localhost',
   networks: {
     hardhat: {
       chainId: 1337
+    },
+    localhost: {
+      url: "http://127.0.0.1:8545/",
+      accounts: [process.env.PRIVATE_KEY]
     },
     rinkeby: {
       url: "https://rinkeby.infura.io/v3/40c2813049e44ec79cb4d7e0d18de173",

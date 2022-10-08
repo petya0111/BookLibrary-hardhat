@@ -26,12 +26,10 @@ describe("BookLibrary", function () {
 
     it("Should be created a new book from administrator", async function () {
         const [owner, addr1] = await ethers.getSigners();
-        const createBookAdmin = await bookLibrary.connect(owner).addNewBook(dummyName, bookCopies);
-        await createBookAdmin.wait();
+        await bookLibrary.connect(owner).addNewBook(dummyName, bookCopies);
 
         const getFirstBookDetail = await bookLibrary.getBookDetail(1);
-        const detail = await getFirstBookDetail;
-        expect(detail[0]).to.be.equal(dummyName);
+        expect(getFirstBookDetail[0]).to.be.equal(dummyName);
         expect(await bookLibrary.bookCountInLibrary()).to.be.greaterThan(0);
     });
 
@@ -54,7 +52,7 @@ describe("BookLibrary", function () {
         const [owner, addr1, addr2] = await ethers.getSigners();
         const bookOneCopy = await bookLibrary.connect(owner).addNewBook("The only one", 1);
         await bookOneCopy.wait();
-        expect(bookLibrary.connect(addr1).borrowBook(1))
+        expect(bookLibrary.connect(addr1).borrowBook(1));
         expect(bookLibrary.connect(addr2).borrowBook(1))
             .to.be.revertedWith("There are no copies of this book left.");
     });

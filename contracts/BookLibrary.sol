@@ -16,37 +16,54 @@ contract Library is Ownable {
         mapping(uint256 => address) borrowedUserIds;
     }
 
+    event LogBookAdded(string name, uint id);
+
     uint256 public bookCountInLibrary;
 
     mapping(string => bool) private isBookAvailable;
-    mapping(address=> mapping(uint256=>bool)) private isBorrowed;
+    mapping(address => mapping(uint256 => bool)) private isBorrowed;
     mapping(uint256 => Book) public BookStorage;
 
     modifier bookIsAlreadyEntered(string memory _name) {
-        require(!isBookAvailable[_name],"Book is already available");
+        require(!isBookAvailable[_name], "Book is already available");
         _;
     }
 
-    function addNewBook(string memory _name, uint256 _numberOfCopies)  external onlyOwner bookIsAlreadyEntered(_name) {
+    function addNewBook(string memory _name, uint256 _numberOfCopies)
+        external
+        onlyOwner
+        bookIsAlreadyEntered(_name)
+    {
         require(bytes(_name).length != 0, "Name field must be not blank");
-        isBookAvailable[_name] = true; 
+        isBookAvailable[_name] = true;
         // the first book starts from id=1
-        uint256 newIdentifier =  bookCountInLibrary.add(1);
+        uint256 newIdentifier = bookCountInLibrary.add(1);
         Book storage newBook = BookStorage[newIdentifier];
-       
+
         newBook.name = _name;
         newBook.numberOfCopies = _numberOfCopies;
         bookCountInLibrary = bookCountInLibrary.add(1);
+        emit LogBookAdded(_name, newIdentifier);
     }
-    function getBookDetail(uint256 _id) public view returns (string memory, uint256)
+
+    function getBookDetail(uint256 _id)
+        public
+        view
+        returns (string memory, uint256)
     {
         return (BookStorage[_id].name, BookStorage[_id].numberOfCopies);
     }
 
     function borrowBook(uint256 _identifier) external {
-        require(!isBorrowed[msg.sender][_identifier], "Book is already borrowed from the same user.");
+        require(
+            !isBorrowed[msg.sender][_identifier],
+            "Book is already borrowed from the same user."
+        );
         Book storage book = BookStorage[_identifier];
-        require((book.numberOfCopies.sub(1)) > 0, "There are no copies of this book left.");
+        require(
+            (book.numberOfCopies.sub(1)) > 0,
+            "There are no copies of this book left."
+        );
         isBorrowed[msg.sender][_identifier] = true;
         book.numberOfCopies = book.numberOfCopies.sub(1);
         book.borrowedUserIds[book.ownerCount] = msg.sender;
@@ -60,12 +77,17 @@ contract Library is Ownable {
         isBorrowed[msg.sender][_id] = false;
     }
 
-    function getBookBorrowHistory(uint256 _id) public view returns(address[] memory){
-        address[] memory addressesUsers = new address[](BookStorage[_id].ownerCount);
-        for(uint256 idx = 0; idx < BookStorage[_id].ownerCount; idx++) {
+    function getBookBorrowHistory(uint256 _id)
+        public
+        view
+        returns (address[] memory)
+    {
+        address[] memory addressesUsers = new address[](
+            BookStorage[_id].ownerCount
+        );
+        for (uint256 idx = 0; idx < BookStorage[_id].ownerCount; idx++) {
             addressesUsers[idx] = BookStorage[_id].borrowedUserIds[idx];
         }
         return addressesUsers;
     }
-
 }

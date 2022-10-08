@@ -2,13 +2,33 @@
 
 This project demonstrates a Book Library contracts. 
 
-Execute tasks for local setup
+## Execute tasks for local setup
+
+Install the dependencies
 
 ```shell
-npx hardhat compile
-npx hardhat test
-npx hardhat node
-npx hardhat deploy-mainnet --network goerli --private-key <YOUR private key>
-npx hardhat deploy-mainnet --network rinkeby --private-key <YOUR private key>
+npm install
 ```
-Create .env file with keys for .env.example
+
+Compile the contracts
+```shell
+npx hardhat compile
+```
+
+> Create .env file with keys from .env.example. By default network is goerli so put private key from goerli network.
+
+Run local network with test accounts
+```shell
+npx hardhat node
+```
+
+Run tests with high coverage. 
+```shell
+npx hardhat test
+```
+
+Test deploying on testnet networks
+```shell
+npx hardhat deploy-param-privateKey --network goerli --private-key <YOUR private key>
+npx hardhat deploy-param-privateKey --network rinkeby --private-key <YOUR private key>
+```

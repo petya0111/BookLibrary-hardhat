@@ -1,7 +1,7 @@
 const hre = require('hardhat')
 const ethers = hre.ethers;
 
-async function deployElectionContract(_privateKey) {
+async function deployLibraryContract(_privateKey) {
     await hre.run('compile'); // We are compiling the contracts using subtask
     const wallet = new ethers.Wallet(_privateKey, hre.ethers.provider) // New wallet with the privateKey passed from CLI as param
     console.log('Deploying contracts with the account:', wallet.address); // We are printing the address of the deployer
@@ -9,6 +9,12 @@ async function deployElectionContract(_privateKey) {
 
     const bookLibrary = await ethers.getContractFactory("Library", wallet); // Get the contract factory with the signer from the wallet created
     const bookLibraryContract = await bookLibrary.deploy();
+    const testResults = await hre.run('test', {
+        address: bookLibraryContract.address,
+        constructorArguments: [
+        ],
+    });
+    await hre.run('print', { message: testResults })
     console.log('Waiting for bookLibrary deployment...');
     await bookLibraryContract.deployed();
 
@@ -21,5 +27,5 @@ async function deployElectionContract(_privateKey) {
     });
     await hre.run('print', { message: verification })
 }
-  
-module.exports = deployElectionContract;
+
+module.exports = deployLibraryContract;

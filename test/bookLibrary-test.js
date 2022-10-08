@@ -2,19 +2,19 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("BookLibrary", function () {
-    let bookLibraryFactory;
-    let bookLibrary;
     let dummyName = "Lorem Ipsum";
     let bookCopies = 50;
+    let connectAdmin;
+    let connectClient1;
 
     let address1;
     before(async () => {
-        bookLibraryFactory = await ethers.getContractFactory("Library");
-        bookLibrary = await bookLibraryFactory.deploy();
+        let bookLibraryFactory = await ethers.getContractFactory("Library");
+        let bookLibrary = await bookLibraryFactory.deploy();
         const [owner, addr1, addr2] = await ethers.getSigners();
+        address1 = addr1;
         connectAdmin = bookLibrary.connect(owner);
         connectClient1 = bookLibrary.connect(addr1);
-        address1 = addr1;
         connectClient2 = bookLibrary.connect(addr2);
         await bookLibrary.deployed({ from: owner });
     });
@@ -55,7 +55,7 @@ describe("BookLibrary", function () {
             .to.be.rejectedWith("Book is already borrowed.");
     });
 
-    it("Admin adds book and two users got all of the copies", async function () {
+    it("Admin adds book and users can't take it because no copies left", async function () {
         await connectAdmin.addNewBook("The only one", 0);
         expect(connectClient2.borrowBook(1))
             .to.be.rejectedWith("There are no copies of this book left.");

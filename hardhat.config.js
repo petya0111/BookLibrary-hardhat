@@ -6,9 +6,6 @@ require("dotenv").config()
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  paths: {
-    artifacts: "./build",
-  },
   solidity: {
     version: "0.8.0",
     settings: {
@@ -18,7 +15,7 @@ module.exports = {
       },
     },
   },
-  defaultNetwork: 'localhost',
+  defaultNetwork: 'goerli',
   networks: {
     hardhat: {
       chainId: 1337

@@ -23,7 +23,7 @@ contract Library is Ownable {
     mapping(uint256 => Book) public BookStorage;
 
     modifier bookIsAlreadyEntered(string memory _name) {
-        require(isBookAvailable[_name] == false,"Book is already available");
+        require(!isBookAvailable[_name],"Book is already available");
         _;
     }
 
@@ -44,9 +44,9 @@ contract Library is Ownable {
     }
 
     function borrowBook(uint256 _identifier) external {
-        require(!isBorrowed[msg.sender][_identifier] == true, "Book is already borrowed from the same user.");
+        require(!isBorrowed[msg.sender][_identifier], "Book is already borrowed from the same user.");
         Book storage book = BookStorage[_identifier];
-        require(book.numberOfCopies > 0, "There are no copies of this book left.");
+        require((book.numberOfCopies.sub(1)) > 0, "There are no copies of this book left.");
         isBorrowed[msg.sender][_identifier] = true;
         book.numberOfCopies = book.numberOfCopies.sub(1);
         book.borrowedUserIds[book.ownerCount] = msg.sender;
@@ -54,7 +54,7 @@ contract Library is Ownable {
     }
 
     function returnBook(uint256 _id) external {
-        require(isBorrowed[msg.sender][_id] == true, "Book is not borrowed.");
+        require(isBorrowed[msg.sender][_id], "Book is not borrowed.");
         Book storage book = BookStorage[_id];
         book.numberOfCopies = book.numberOfCopies.add(1);
         isBorrowed[msg.sender][_id] = false;

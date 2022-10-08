@@ -32,6 +32,7 @@ describe("BookLibrary", function () {
         const getFirstBookDetail = await bookLibrary.getBookDetail(1);
         const detail = await getFirstBookDetail;
         expect(detail[0]).to.be.equal(dummyName);
+        expect(await bookLibrary.bookCountInLibrary()).to.be.greaterThan(0);
     });
 
     it("Should throw if the book is not borrowed but return action is initiated", async function () {

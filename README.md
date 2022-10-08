@@ -24,7 +24,12 @@ npx hardhat node
 
 Run tests with high coverage. For example on localhost network after you have run local node.
 ```shell
-npx hardhat test --network localhost
+npx hardhat test --network hardhat
+```
+
+Run tests coverage. 
+```shell
+npx hardhat coverage --network hardhat
 ```
 
 Test deploying on testnet networks

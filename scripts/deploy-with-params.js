@@ -11,7 +11,7 @@ async function deployLibraryContract(_privateKey) {
     const bookLibraryContract = await bookLibrary.deploy();
     await hre.run('test', {
         address: bookLibraryContract.address,
-        privateKey: _privateKey,
+        network: "hardhat",
         constructorArguments: [
         ],
     });

@@ -4,6 +4,7 @@ require("@nomiclabs/hardhat-ethers")
 require("@nomiclabs/hardhat-etherscan")
 require("solidity-coverage")
 require("dotenv").config()
+require("./tasks/hardhat-tasks")
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -40,14 +41,3 @@ module.exports = {
         apiKey: "CHIRAADNUI814XIT9ST36R63UFNBNDKBDY",
     },
 }
-subtask("print", "Prints a message")
-    .addParam("message", "The message to print")
-    .setAction(async (taskArgs) => {
-        console.log(taskArgs.message)
-    })
-task("deploy-testnets", "Deploys contract on a provided network").setAction(
-    async () => {
-        const deployElectionContract = require("./scripts/deploy")
-        await deployElectionContract()
-    }
-)

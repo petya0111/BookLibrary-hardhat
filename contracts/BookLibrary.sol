@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
+error NoCopiesLeft();
 
 contract Library is Ownable {
     using SafeMath for uint256; // to prevent overflowing numbers
@@ -16,7 +18,7 @@ contract Library is Ownable {
         mapping(uint256 => address) borrowedUserIds;
     }
 
-    event LogBookAdded(string name, uint id);
+    event LogBookAdded(string name, uint256 id);
 
     uint256 public bookCountInLibrary;
 
@@ -58,12 +60,11 @@ contract Library is Ownable {
             "Book is already borrowed from the same user."
         );
         Book storage book = BookStorage[_identifier];
-        require(
-            (book.numberOfCopies.sub(1)) > 0,
-            "There are no copies of this book left."
-        );
-        isBorrowed[msg.sender][_identifier] = true;
+        if ((book.numberOfCopies.sub(1)) < 1) {
+            revert NoCopiesLeft();
+        }
         book.numberOfCopies = book.numberOfCopies.sub(1);
+        isBorrowed[msg.sender][_identifier] = true;
         book.borrowedUserIds[book.ownerCount] = msg.sender;
         book.ownerCount = book.ownerCount.add(1);
     }

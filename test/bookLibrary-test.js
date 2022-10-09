@@ -1,6 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
+
 describe("BookLibrary", function () {
     let dummyName = "Lorem Ipsum";
     let bookCopies = 50;
@@ -48,12 +49,16 @@ describe("BookLibrary", function () {
         expect(borrowHistoryAddresses).to.have.length(1);
     });
 
+    it("Should borrow a book that is already borrowed for the same user", async function () {
+        expect(bookLibrary.borrowBook(1)).to.be.revertedWith("Book is already borrowed from the same user.");
+    });
+
     it("Admin adds book and users can't take it because no copies left", async function () {
         const [owner, addr1, addr2] = await ethers.getSigners();
         await bookLibrary.connect(owner).addNewBook("The only one", 1);
         expect(bookLibrary.connect(addr1).borrowBook(2));
         expect(bookLibrary.connect(addr2).borrowBook(2))
-            .to.be.revertedWith("There are no copies of this book left.");
+            .to.be.revertedWithCustomError(bookLibrary, "NoCopiesLeft");
     });
 
     it("Should return a book and check if copies are one more", async function () {

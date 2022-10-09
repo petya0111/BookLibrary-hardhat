@@ -24,12 +24,12 @@ npx hardhat node
 
 Run tests with high coverage. Unit tests are typically run on hardhat networks or ganache.
 ```shell
-npx hardhat test --network hardhat
+npm run test
 ```
 
 Run tests coverage. 
 ```shell
-npx hardhat coverage --network hardhat
+npm run coverage
 ```
 
 Deploying on testnet networks

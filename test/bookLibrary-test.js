@@ -49,10 +49,6 @@ describe("BookLibrary", function () {
         expect(borrowHistoryAddresses).to.have.length(1);
     });
 
-    it("Should borrow a book that is already borrowed for the same user", async function () {
-        expect(bookLibrary.borrowBook(1)).to.be.revertedWith("Book is already borrowed from the same user.");
-    });
-
     it("Admin adds book and users can't take it because no copies left", async function () {
         const [owner, addr1, addr2] = await ethers.getSigners();
         await bookLibrary.connect(owner).addNewBook("The only one", 1);

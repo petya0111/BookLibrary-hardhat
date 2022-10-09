@@ -54,17 +54,13 @@ contract Library is Ownable {
         return (BookStorage[_id].name, BookStorage[_id].numberOfCopies);
     }
 
-    function borrowBook(uint256 _identifier) external {
-        require(
-            !isBorrowed[msg.sender][_identifier],
-            "Book is already borrowed from the same user."
-        );
-        Book storage book = BookStorage[_identifier];
+    function borrowBook(uint256 _id) external {
+        Book storage book = BookStorage[_id];
         if ((book.numberOfCopies.sub(1)) < 1) {
             revert NoCopiesLeft();
         }
         book.numberOfCopies = book.numberOfCopies.sub(1);
-        isBorrowed[msg.sender][_identifier] = true;
+        isBorrowed[msg.sender][_id] = true;
         book.borrowedUserIds[book.ownerCount] = msg.sender;
         book.ownerCount = book.ownerCount.add(1);
     }

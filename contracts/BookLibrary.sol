@@ -36,10 +36,8 @@ contract Library is Ownable {
     {
         require(bytes(_name).length != 0, "Name field must be not blank");
         isBookAvailable[_name] = true;
-        // the first book starts from id=1
-        uint256 newIdentifier = bookCountInLibrary.add(1);
+        uint256 newIdentifier = bookCountInLibrary.add(1); // the first book starts from id=1
         Book storage newBook = BookStorage[newIdentifier];
-
         newBook.name = _name;
         newBook.numberOfCopies = _numberOfCopies;
         bookCountInLibrary = bookCountInLibrary.add(1);

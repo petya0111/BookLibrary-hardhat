@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
-require('@nomiclabs/hardhat-waffle');
+require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan")
 require("solidity-coverage");
 require("dotenv").config()
@@ -44,9 +45,8 @@ subtask("print", "Prints a message")
   .setAction(async (taskArgs) => {
     console.log(taskArgs.message);
   });
-task("deploy-param-privateKey", "Deploys contract on a provided network")
-  .addParam("privateKey", "Please provide the private key")
-  .setAction(async ({ privateKey }) => {
-    const deployElectionContract = require("./scripts/deploy-with-params");
-    await deployElectionContract(privateKey);
+task("deploy-testnets", "Deploys contract on a provided network")
+  .setAction(async () => {
+    const deployElectionContract = require("./scripts/deploy");
+    await deployElectionContract();
   });

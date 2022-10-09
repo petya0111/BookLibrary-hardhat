@@ -22,7 +22,7 @@ Run local network with test accounts
 npx hardhat node
 ```
 
-Run tests with high coverage. 
+Run tests with high coverage. Unit tests are typically run on hardhat networks or ganache.
 ```shell
 npx hardhat test --network hardhat
 ```
@@ -32,8 +32,7 @@ Run tests coverage.
 npx hardhat coverage --network hardhat
 ```
 
-Test deploying on testnet networks
+Deploying on testnet networks
 ```shell
-npx hardhat deploy-param-privateKey --network goerli --private-key <YOUR private key>
-npx hardhat deploy-param-privateKey --network rinkeby --private-key <YOUR private key>
+npx hardhat deploy-testnets --network goerli
 ```

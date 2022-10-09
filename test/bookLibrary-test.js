@@ -27,10 +27,8 @@ describe("BookLibrary", function () {
     it("Should be created a new book from administrator", async function () {
         const [owner, addr1] = await ethers.getSigners();
         await bookLibrary.connect(owner).addNewBook(dummyName, bookCopies);
-
         const getFirstBookDetail = await bookLibrary.getBookDetail(1);
         expect(getFirstBookDetail[0]).to.be.equal(dummyName);
-        expect(await bookLibrary.bookCountInLibrary()).to.be.greaterThan(0);
     });
 
     it("Should throw if the book is not borrowed but return action is initiated", async function () {
@@ -44,24 +42,26 @@ describe("BookLibrary", function () {
     });
 
     it("Should borrow a book and check if user is in borrow history", async function () {
-        await bookLibrary.borrowBook(1);
-        expect(await bookLibrary.getBookBorrowHistory(1)).to.have.length(1);
+        const [owner, addr1, addr2] = await ethers.getSigners();
+        await bookLibrary.connect(addr1).borrowBook(1);
+        let borrowHistoryAddresses = await bookLibrary.getBookBorrowHistory(1);
+        expect(borrowHistoryAddresses).to.have.length(1);
     });
 
     it("Admin adds book and users can't take it because no copies left", async function () {
         const [owner, addr1, addr2] = await ethers.getSigners();
-        const bookOneCopy = await bookLibrary.connect(owner).addNewBook("The only one", 1);
-        await bookOneCopy.wait();
-        expect(bookLibrary.connect(addr1).borrowBook(1));
-        expect(bookLibrary.connect(addr2).borrowBook(1))
+        await bookLibrary.connect(owner).addNewBook("The only one", 1);
+        expect(bookLibrary.connect(addr1).borrowBook(2));
+        expect(bookLibrary.connect(addr2).borrowBook(2))
             .to.be.revertedWith("There are no copies of this book left.");
     });
 
     it("Should return a book and check if copies are one more", async function () {
-        const getBookDetailBefore = await bookLibrary.getBookDetail(1);
-        await bookLibrary.returnBook(1);
+        const [owner, addr1, addr2] = await ethers.getSigners();
+        const oldCopiesCount = await bookLibrary.getBookDetail(1);
+        await bookLibrary.connect(addr1).returnBook(1);
         const newCopiesCount = await bookLibrary.getBookDetail(1);
-        expect(newCopiesCount[1].toNumber()).to.be.equal(getBookDetailBefore[1].toNumber() + 1);
+        expect(parseInt(newCopiesCount[1])).to.be.equal(parseInt(oldCopiesCount[1]) + 1);
     });
 
 });

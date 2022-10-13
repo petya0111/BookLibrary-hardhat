@@ -39,14 +39,6 @@ describe("BookLibrary", function () {
         expect(getFirstBookDetail[0]).to.be.equal(dummyName)
     })
 
-    it("Should throw if the book is not borrowed but return action is initiated", async function () {
-        const [owner, addr1] = await ethers.getSigners()
-        const hashSecondBook = await bookLibrary.getAllBookIds()
-        expect(
-            bookLibrary.connect(owner).returnBook(hashSecondBook[1])
-        ).to.be.revertedWithCustomError(bookLibrary, "Library__NotBorrowedBook")
-    })
-
     it("Should throw if book with same name is already available", async function () {
         const [owner, addr1] = await ethers.getSigners()
         expect(
@@ -74,6 +66,17 @@ describe("BookLibrary", function () {
         ).to.be.revertedWithCustomError(bookLibrary, "Library__NoCopiesLeft")
     })
 
+    it("Should throw NotBorrowed if the book is returned but not borrowed again", async function () {
+        const [owner, addr1] = await ethers.getSigners()
+        await bookLibrary.connect(owner).addNewBook("Mastering Etherium", 100)
+        const hashThirdBook = await bookLibrary.getAllBookIds()
+        expect(await bookLibrary.connect(addr1).borrowBook(hashThirdBook[2]))
+        expect(await bookLibrary.connect(addr1).returnBook(hashThirdBook[2]))
+        expect(
+            bookLibrary.connect(owner).returnBook(hashThirdBook[2])
+        ).to.be.revertedWithCustomError(bookLibrary, "Library__NotBorrowedBook")
+    })
+
     it("Should return a book and check if copies are one more", async function () {
         const [owner, addr1, addr2] = await ethers.getSigners()
         const hashFirstBook = await bookLibrary.getAllBookIds()
@@ -87,6 +90,6 @@ describe("BookLibrary", function () {
 
     it("Get number of books in library", async function () {
         const numberOfBooks = await bookLibrary.getNumberOfBooks()
-        expect(parseInt(numberOfBooks)).to.equal(2)
+        expect(parseInt(numberOfBooks)).to.equal(3)
     })
 })

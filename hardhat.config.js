@@ -1,10 +1,10 @@
-require("@nomicfoundation/hardhat-toolbox")
-require("@nomicfoundation/hardhat-chai-matchers")
-require("@nomiclabs/hardhat-ethers")
-require("@nomiclabs/hardhat-etherscan")
-require("solidity-coverage")
-require("dotenv").config()
-require("./tasks/hardhat-tasks")
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomiclabs/hardhat-ethers");
+require("@nomiclabs/hardhat-etherscan");
+require("solidity-coverage");
+require("dotenv").config();
+require("./tasks/hardhat-tasks");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -40,4 +40,4 @@ module.exports = {
         // Obtain one at https://etherscan.io/
         apiKey: "CHIRAADNUI814XIT9ST36R63UFNBNDKBDY",
     },
-}
+};

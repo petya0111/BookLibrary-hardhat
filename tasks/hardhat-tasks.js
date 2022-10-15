@@ -1,13 +1,13 @@
-const { task } = require("hardhat/config")
+const { task } = require("hardhat/config");
 
 task("deploy-testnets", "Deploys contract on a provided network").setAction(
     async () => {
-        const deployBookLibraryContract = require("./scripts/deploy")
-        await deployBookLibraryContract()
+        const deployBookLibraryContract = require("./scripts/deploy");
+        await deployBookLibraryContract();
     }
-)
+);
 subtask("print", "Prints a message")
     .addParam("message", "The message to print")
     .setAction(async (taskArgs) => {
-        console.log(taskArgs.message)
-    })
+        console.log(taskArgs.message);
+    });

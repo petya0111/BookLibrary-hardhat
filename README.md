@@ -2,7 +2,7 @@
 
 This project demonstrates a Book Library contracts. 
 
-> **_NOTE:_**  Contract is already deployed in Goerli testnet - bookLibrary Contract address: 0xA67EC72bC44877e13808332323e6ba4A6Ba4E58B
+> **_NOTE:_**  Contract is already deployed in Goerli testnet - bookLibrary Contract address: 0xe17Ff3FDAd1404e96082eC15F54793E0eE580b69
 
 ## Execute tasks for local setup
 

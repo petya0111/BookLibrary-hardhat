@@ -20,7 +20,9 @@ async function deployLibraryContract() {
     await bookLibraryContract.deployed();
 
     await hre.run("print", {
-        message: "bookLibrary Contract address: " + bookLibraryContract.address,
+        message:
+            "Deployed BookLibrary on contract address: " +
+            bookLibraryContract.address,
     });
     try {
         await hre.run("verify:verify", {
@@ -28,8 +30,9 @@ async function deployLibraryContract() {
             constructorArguments: [],
         });
     } catch (e) {
-        if (e.message.toLowerCase().includes("already verified")) {
-            await hre.run("print", { message: "Already verified." });
+        if (e.message.toLowerCase().includes("recently deployed") ||
+            e.message.toLowerCase().includes("already verified")) {
+            await hre.run("print", { message: "Validation failed." });
         } else {
             await hre.run("print", { message: e });
         }

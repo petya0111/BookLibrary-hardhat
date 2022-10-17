@@ -31,7 +31,11 @@ describe("BookLibrary", function () {
 
     it("Should be created a new book from administrator", async function () {
         const [owner, addr1] = await ethers.getSigners();
-        await bookLibrary.connect(owner).addNewBook(dummyName, bookCopies);
+        await expect(
+            bookLibrary.connect(owner).addNewBook(dummyName, bookCopies)
+        )
+            .to.emit(bookLibrary, "LogBookAdded")
+            .withArgs(dummyName, bookCopies);
         const hashFirstBook = await bookLibrary.getAllBookIds();
         const getFirstBookDetail = await bookLibrary.getBookDetail(
             hashFirstBook[0]
@@ -49,7 +53,9 @@ describe("BookLibrary", function () {
     it("Should borrow a book and check if user is in borrow history", async function () {
         const [owner, addr1, addr2] = await ethers.getSigners();
         const hashFirstBook = await bookLibrary.getAllBookIds();
-        await bookLibrary.connect(addr1).borrowBook(hashFirstBook[0]);
+        await expect(bookLibrary.connect(addr1).borrowBook(hashFirstBook[0]))
+            .to.emit(bookLibrary, "LogBookBorrowed")
+            .withArgs(hashFirstBook[0]);
         let borrowHistoryAddresses = await bookLibrary.getBookBorrowHistory(
             hashFirstBook[0]
         );
@@ -86,7 +92,9 @@ describe("BookLibrary", function () {
         const oldCopiesCount = await bookLibrary.getBookDetail(
             hashFirstBook[0]
         );
-        await bookLibrary.connect(addr1).returnBook(hashFirstBook[0]);
+        await expect(bookLibrary.connect(addr1).returnBook(hashFirstBook[0]))
+            .to.emit(bookLibrary, "LogBookReturned")
+            .withArgs(hashFirstBook[0]);
         const newCopiesCount = await bookLibrary.getBookDetail(
             hashFirstBook[0]
         );

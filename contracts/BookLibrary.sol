@@ -24,11 +24,12 @@ contract Library is Ownable {
     mapping(address => mapping(bytes32 => bool)) private isBorrowed;
     mapping(bytes32 => Book) public BookStorage;
 
-    event LogBookAdded(string name, uint32 copies); 
+    event LogBookAdded(string indexed name, uint32 indexed copies); 
     // every state changing function needs to emit event
     // it is cheap way to write something into the blockchain
-    event LogBookBorrowed(bytes32 id);
-    event LogBookReturned(bytes32 id);
+    // indexed keyword for fast searching up to 3 idx params on event
+    event LogBookBorrowed(bytes32 indexed id);
+    event LogBookReturned(bytes32 indexed id);
 
     modifier bookIsAlreadyEntered(string memory _name) {
         require(!isBookAvailable[_name], "Book is already available");

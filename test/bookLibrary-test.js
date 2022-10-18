@@ -1,14 +1,15 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, network } = require("hardhat");
+const { developmentChains } = require("../hardhat.config")
 
-describe("BookLibrary", function () {
+!developmentChains.includes(network.name)
+    ? describe.skip
+    : describe("BookLibrary", function () {
     let dummyName = "Lorem Ipsum";
     let bookCopies = 50;
     let bookLibrary;
-    let bookLibraryFactory;
-    let bookIds;
     before(async () => {
-        bookLibraryFactory = await ethers.getContractFactory("Library");
+        let  bookLibraryFactory = await ethers.getContractFactory("Library");
         bookLibrary = await bookLibraryFactory.deploy();
         const [owner, addr1] = await ethers.getSigners();
         await bookLibrary.deployed({ from: owner });

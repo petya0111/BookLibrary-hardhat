@@ -36,9 +36,10 @@ describe("BookLibrary", function () {
         )
             .to.emit(bookLibrary, "LogBookAdded")
             .withArgs(dummyName, bookCopies);
-        const hashFirstBook = await bookLibrary.getAllBookIds();
+        const allBookIds = await bookLibrary.getAllBookIds();
+        const hashFirstBook = allBookIds[0];
         const getFirstBookDetail = await bookLibrary.getBookDetail(
-            hashFirstBook[0]
+            hashFirstBook
         );
         expect(getFirstBookDetail[0]).to.be.equal(dummyName);
     });
@@ -52,12 +53,13 @@ describe("BookLibrary", function () {
 
     it("Should borrow a book and check if user is in borrow history", async function () {
         const [owner, addr1, addr2] = await ethers.getSigners();
-        const hashFirstBook = await bookLibrary.getAllBookIds();
-        await expect(bookLibrary.connect(addr1).borrowBook(hashFirstBook[0]))
+        const allBookIds = await bookLibrary.getAllBookIds();
+        const hashFirstBook = allBookIds[0];
+        await expect(bookLibrary.connect(addr1).borrowBook(hashFirstBook))
             .to.emit(bookLibrary, "LogBookBorrowed")
-            .withArgs(hashFirstBook[0]);
+            .withArgs(hashFirstBook);
         let borrowHistoryAddresses = await bookLibrary.getBookBorrowHistory(
-            hashFirstBook[0]
+            hashFirstBook
         );
         expect(borrowHistoryAddresses.length).to.equal(1);
     });
@@ -65,21 +67,23 @@ describe("BookLibrary", function () {
     it("Admin adds book and users can't take it because no copies left", async function () {
         const [owner, addr1, addr2] = await ethers.getSigners();
         await bookLibrary.connect(owner).addNewBook("The only one", 1);
-        const hashSecondBook = await bookLibrary.getAllBookIds();
-        expect(bookLibrary.connect(addr1).borrowBook(hashSecondBook[1]));
+        const allBookIds = await bookLibrary.getAllBookIds();
+        const hashSecondBook = allBookIds[1];
+        expect(bookLibrary.connect(addr1).borrowBook(hashSecondBook));
         expect(
-            bookLibrary.connect(addr2).borrowBook(hashSecondBook[1])
+            bookLibrary.connect(addr2).borrowBook(hashSecondBook)
         ).to.be.revertedWithCustomError(bookLibrary, "Library__NoCopiesLeft");
     });
 
     it("Should throw NotBorrowed if the book is returned but not borrowed again", async function () {
         const [owner, addr1] = await ethers.getSigners();
         await bookLibrary.connect(owner).addNewBook("Mastering Etherium", 100);
-        const hashThirdBook = await bookLibrary.getAllBookIds();
-        expect(await bookLibrary.connect(addr1).borrowBook(hashThirdBook[2]));
-        expect(await bookLibrary.connect(addr1).returnBook(hashThirdBook[2]));
+        const allBookIds = await bookLibrary.getAllBookIds();
+        const hashThirdBook = allBookIds[2];
+        expect(await bookLibrary.connect(addr1).borrowBook(hashThirdBook));
+        expect(await bookLibrary.connect(addr1).returnBook(hashThirdBook));
         expect(
-            bookLibrary.connect(owner).returnBook(hashThirdBook[2])
+            bookLibrary.connect(owner).returnBook(hashThirdBook)
         ).to.be.revertedWithCustomError(
             bookLibrary,
             "Library__NotBorrowedBook"
@@ -88,16 +92,13 @@ describe("BookLibrary", function () {
 
     it("Should return a book and check if copies are one more", async function () {
         const [owner, addr1, addr2] = await ethers.getSigners();
-        const hashFirstBook = await bookLibrary.getAllBookIds();
-        const oldCopiesCount = await bookLibrary.getBookDetail(
-            hashFirstBook[0]
-        );
-        await expect(bookLibrary.connect(addr1).returnBook(hashFirstBook[0]))
+        const allBookIds = await bookLibrary.getAllBookIds();
+        const hashFirstBook = allBookIds[0];
+        const oldCopiesCount = await bookLibrary.getBookDetail(hashFirstBook);
+        await expect(bookLibrary.connect(addr1).returnBook(hashFirstBook))
             .to.emit(bookLibrary, "LogBookReturned")
-            .withArgs(hashFirstBook[0]);
-        const newCopiesCount = await bookLibrary.getBookDetail(
-            hashFirstBook[0]
-        );
+            .withArgs(hashFirstBook);
+        const newCopiesCount = await bookLibrary.getBookDetail(hashFirstBook);
         expect(parseInt(newCopiesCount[1])).to.be.equal(
             parseInt(oldCopiesCount[1]) + 1
         );

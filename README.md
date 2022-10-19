@@ -43,3 +43,10 @@ Deploying on mainnet networks
 ```shell
 npx hardhat deploy-mainnet --private-key 0x
 ```
+
+Interaction with contract 
+
+```shell
+npx hardhat run scripts/interact-local.js
+npx hardhat run scripts/interact-goerli.js
+```

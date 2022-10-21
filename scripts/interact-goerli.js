@@ -30,10 +30,12 @@ const run = async function () {
         borrowersOfTheBook.length > 0
     );
     await bookLibraryContract.returnBook(firstBook);
-    const bookDetail = await bookLibraryContract.getBookDetail(firstBook);
-    console.log(
-        `Checks the availability of the book. Book name: ${bookDetail[0]} copies ${bookDetail[1]}`
-    );
+    for (let bookId of allBookIds) {
+        const bookDetail = await bookLibraryContract.getBookDetail(bookId);
+        console.log(
+            `Checks the availability of the book. Book name: ${bookDetail[0]} copies ${bookDetail[1]}`
+        );
+    }
 };
 
 run();

@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 const run = async function () {
     // Another way to create a contract
-    const bookLibraryFactory = await hre.ethers.getContractFactory("Library");
+    const bookLibraryFactory = await hre.ethers.getContractFactory("BookLibraryContract");
     const bookLibraryContract = await bookLibraryFactory.attach(
         "0x5FbDB2315678afecb367f032d93F642f64180aa3"
     );

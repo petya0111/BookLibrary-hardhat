@@ -12,7 +12,7 @@ async function deployLibraryContract() {
         message: "Account balance:" + (await deployer.getBalance()).toString(),
     }); // We are printing the account balance
 
-    const bookLibrary = await ethers.getContractFactory("Library"); // Get the contract factory with the signer from the wallet created
+    const bookLibrary = await ethers.getContractFactory("BookLibraryContract"); // Get the contract factory with the signer from the wallet created
     const bookLibraryContract = await bookLibrary.deploy();
     await hre.run("print", {
         message: "Waiting for bookLibrary deployment...",

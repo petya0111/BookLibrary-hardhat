@@ -9,7 +9,7 @@ const { developmentChains } = require("../hardhat.config")
     let bookCopies = 50;
     let bookLibrary;
     before(async () => {
-        let  bookLibraryFactory = await ethers.getContractFactory("Library");
+        let  bookLibraryFactory = await ethers.getContractFactory("BookLibraryContract");
         bookLibrary = await bookLibraryFactory.deploy();
         const [owner, addr1] = await ethers.getSigners();
         await bookLibrary.deployed({ from: owner });

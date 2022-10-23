@@ -1,4 +1,4 @@
-import { Web3ReactProvider } from "@web3-react/core";
+import { useWeb3React, Web3ReactProvider } from "@web3-react/core";
 import type { AppProps } from "next/app";
 import React, { createContext, useReducer } from "react";
 import getLibrary from "../getLibrary";
@@ -13,6 +13,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { formatEtherscanLink } from "../util";
 
 export interface Web3State {
   connected: boolean;
@@ -82,6 +83,8 @@ export const Web3Context = createContext<{
 
 function NextWeb3App({ Component, pageProps }: AppProps) {
   const [state, dispatch] = useReducer(web3Reducer, initialState);
+  const { active, error, activate, deactivate, chainId, account, setError } =
+    useWeb3React();
   return (
     <Web3Context.Provider value={{ state, dispatch }}>
       <Web3ReactProvider getLibrary={getLibrary}>
@@ -108,7 +111,7 @@ function NextWeb3App({ Component, pageProps }: AppProps) {
                   <Typography>Waiting transation to be mined...</Typography>
                   <Link
                     variant="h5"
-                    href={`https://goerli.etherscan.io/tx/${state.transactionHash}`}
+                    href={formatEtherscanLink("Transaction", [chainId, state.transactionHash] )}
                     target="_blank"
                   >
                     {state.transactionHash}

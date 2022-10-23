@@ -7,7 +7,7 @@ async function deployBookLibraryContract(_privateKey) {
     console.log("Deploying contracts with the account:", wallet.address); // We are printing the address of the deployer
     console.log("Account balance:", (await wallet.getBalance()).toString()); // We are printing the account balance
 
-    const Library = await ethers.getContractFactory("Library", wallet); // Get the contract factory with the signer from the wallet created
+    const Library = await ethers.getContractFactory("BookLibraryContract", wallet); // Get the contract factory with the signer from the wallet created
     const libraryContract = await Library.deploy();
     console.log("Waiting for BookLibrary deployment...");
     await libraryContract.deployed();

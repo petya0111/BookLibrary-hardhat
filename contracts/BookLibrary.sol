@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 error Library__NoCopiesLeft();
 error Library__NotBorrowedBook();
 
-contract Library is Ownable {
+contract BookLibraryContract is Ownable {
     struct Book {
         string name;
         /* bytes32 pass input params and long sentences with keccak, to encode them and transfer it to bytes

@@ -1,7 +1,5 @@
-import type { Web3Provider } from "@ethersproject/providers";
-import { useWeb3React } from "@web3-react/core";
 import { Web3Context } from "../pages/_app";
-import { useContext, useState, useEffect } from "react";
+import { useContext } from "react";
 import {
     IconButton,
     Table,
@@ -14,42 +12,8 @@ import {
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 
-const TableBooks = ({ books, bookLibraryContract,parentStateSetter }) => {
+const TableBooks = ({ books, bookLibraryContract, getBooksFunction }) => {
     const { state, dispatch } = useContext(Web3Context);
-
-    const { account, library } = useWeb3React<Web3Provider>();
-
-    useEffect(() => {
-        getAllBooks();
-    }, []);
-
-    const getAllBooks = async () => {
-        const bookIds = await bookLibraryContract.getAllBookIds();
-        if (bookIds.length > 0) {
-            let arr = [];
-            for (let bookId of bookIds) {
-                let detail = await bookLibraryContract.getBookDetail(bookId);
-                const borrowHistoryUserIds =
-                    await bookLibraryContract.getBookBorrowHistory(bookId);
-                let bookBorrowed = false;
-                if (!borrowHistoryUserIds.includes(account)) {
-                    bookBorrowed = false;
-                } else {
-                    bookBorrowed = await bookLibraryContract.isBookBorrowed(
-                        bookId
-                    );
-                }
-                arr.push({
-                    id: bookId,
-                    name: detail[0],
-                    copies: detail[1],
-                    rented: bookBorrowed,
-                });
-            }
-            console.log(arr);
-            parentStateSetter(arr);
-        }
-    };
     const rentBook = async (id) => {
         dispatch({ type: "fetching" });
         const tx = await bookLibraryContract.borrowBook(id);
@@ -61,7 +25,7 @@ const TableBooks = ({ books, bookLibraryContract,parentStateSetter }) => {
                 messageType: "success",
                 message: "Successfully submitted state result",
             });
-            getAllBooks();
+            getBooksFunction();
         } else {
             dispatch({
                 type: "fetched",
@@ -69,7 +33,7 @@ const TableBooks = ({ books, bookLibraryContract,parentStateSetter }) => {
                 message: JSON.stringify(transactionReceipt),
             });
         }
-        getAllBooks();
+        getBooksFunction();
     };
 
     const returnBook = async (id) => {
@@ -83,7 +47,7 @@ const TableBooks = ({ books, bookLibraryContract,parentStateSetter }) => {
                 messageType: "success",
                 message: "Successfully submitted state result",
             });
-            getAllBooks();
+            getBooksFunction();
         } else {
             dispatch({
                 type: "fetched",
@@ -91,7 +55,7 @@ const TableBooks = ({ books, bookLibraryContract,parentStateSetter }) => {
                 message: JSON.stringify(transactionReceipt),
             });
         }
-        getAllBooks();
+        getBooksFunction();
     };
 
     return (
@@ -114,23 +78,23 @@ const TableBooks = ({ books, bookLibraryContract,parentStateSetter }) => {
                             <TableCell align="right">{row.copies}</TableCell>
                             {row.rented ? (
                                 <TableCell align="right">
-                                    return
                                     <IconButton
                                         onClick={() => {
                                             returnBook(row.id);
                                         }}
                                     >
+                                        return
                                         <KeyboardReturnIcon />
                                     </IconButton>
                                 </TableCell>
                             ) : (
                                 <TableCell align="right">
-                                    rent
                                     <IconButton
                                         onClick={() => {
                                             rentBook(row.id);
                                         }}
                                     >
+                                        rent
                                         <LibraryBooksIcon />
                                     </IconButton>
                                 </TableCell>

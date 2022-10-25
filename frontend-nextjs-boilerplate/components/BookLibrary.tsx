@@ -19,10 +19,6 @@ const BookLibrary = ({ contractAddress }: BookContract) => {
     const [ownerIsLoggedIn, setOwnerIsLoggedIn] = useState<boolean>(false);
     const [books, setBooks] = useState([]);
 
-    const wrapperSetParentState = useCallback(val => {
-        setBooks(val);
-      }, [books]);
-
     useEffect(() => {
         checkIfOwnerContract();
         getAllBooks();
@@ -100,7 +96,7 @@ const BookLibrary = ({ contractAddress }: BookContract) => {
         <div className="results-form">
             <TableBooks
                 books={books}
-                parentStateSetter={wrapperSetParentState}
+                getBooksFunction={getAllBooks}
                 bookLibraryContract={bookLibraryContract}
             />
             {ownerIsLoggedIn && (

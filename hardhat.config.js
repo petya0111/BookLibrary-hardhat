@@ -7,7 +7,7 @@ require("dotenv").config();
 require("./tasks/hardhat-tasks");
 
 /** @type import('hardhat/config').HardhatUserConfig */
-const developmentChains = ["hardhat", "localhost"]
+const developmentChains = ["hardhat", "localhost"];
 module.exports = {
     solidity: {
         version: "0.8.4",
@@ -41,5 +41,5 @@ module.exports = {
         // Obtain one at https://etherscan.io/
         apiKey: "CHIRAADNUI814XIT9ST36R63UFNBNDKBDY",
     },
-    developmentChains
+    developmentChains,
 };

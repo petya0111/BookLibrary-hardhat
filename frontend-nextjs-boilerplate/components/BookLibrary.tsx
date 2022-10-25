@@ -1,16 +1,9 @@
 import type { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Context } from "../pages/_app";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useCallback } from "react";
 import useBookLibraryContract from "../hooks/useBookLibraryContract";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-} from "@mui/material";
+import TableBooks from "./TableBooks";
 
 type BookContract = {
     contractAddress: string;
@@ -26,6 +19,10 @@ const BookLibrary = ({ contractAddress }: BookContract) => {
     const [ownerIsLoggedIn, setOwnerIsLoggedIn] = useState<boolean>(false);
     const [books, setBooks] = useState([]);
 
+    const wrapperSetParentState = useCallback(val => {
+        setBooks(val);
+      }, [books]);
+
     useEffect(() => {
         checkIfOwnerContract();
         getAllBooks();
@@ -38,13 +35,28 @@ const BookLibrary = ({ contractAddress }: BookContract) => {
 
     const getAllBooks = async () => {
         const bookIds = await bookLibraryContract.getAllBookIds();
-        if (bookIds.length > 0 && books.length != bookIds.length) {
-            let arr =[];
+        if (bookIds.length > 0) {
+            let arr = [];
             for (let bookId of bookIds) {
                 let detail = await bookLibraryContract.getBookDetail(bookId);
-                // setBooks({ name: detail[0], copies: detail[1] })
-                arr.push({ name: detail[0], copies: detail[1] });
+                const borrowHistoryUserIds =
+                    await bookLibraryContract.getBookBorrowHistory(bookId);
+                let bookBorrowed = false;
+                if (!borrowHistoryUserIds.includes(account)) {
+                    bookBorrowed = false;
+                } else {
+                    bookBorrowed = await bookLibraryContract.isBookBorrowed(
+                        bookId
+                    );
+                }
+                arr.push({
+                    id: bookId,
+                    name: detail[0],
+                    copies: detail[1],
+                    rented: bookBorrowed,
+                });
             }
+            console.log(arr);
             setBooks(arr);
         }
     };
@@ -86,66 +98,43 @@ const BookLibrary = ({ contractAddress }: BookContract) => {
 
     return (
         <div className="results-form">
-            <TableContainer>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell align="right">Copies</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {books.map((row) => (
-                            <TableRow
-                                key={row.name}
-                                sx={{
-                                    "&:last-child td, &:last-child th": {
-                                        border: 0,
-                                    },
-                                }}
-                            >
-                                <TableCell component="th" scope="row">
-                                    {row.name}
-                                </TableCell>
-                                <TableCell align="right">
-                                    {row.copies}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <TableBooks
+                books={books}
+                parentStateSetter={wrapperSetParentState}
+                bookLibraryContract={bookLibraryContract}
+            />
             {ownerIsLoggedIn && (
-                <form>
-                    <label>
-                        Book name:
-                        <input
-                            disabled={state.fetching}
-                            onChange={bookNameInput}
-                            value={name}
-                            type="text"
-                            name="book_name"
-                        />
-                    </label>
-                    <label>
-                        Book copies:
-                        <input
-                            disabled={state.fetching}
-                            onChange={bookCopiesInput}
-                            value={copies}
-                            type="number"
-                            name="book_copies"
-                        />
-                    </label>
-                </form>
-            )}
-            {ownerIsLoggedIn && (
-                <div className="button-wrapper">
-                    <button disabled={state.fetching} onClick={submitBook}>
-                        Submit Results
-                    </button>
+                <div>
+                    <form>
+                        <label>
+                            Book name:
+                            <input
+                                disabled={state.fetching}
+                                onChange={bookNameInput}
+                                value={name}
+                                type="text"
+                                name="book_name"
+                            />
+                        </label>
+                        <label>
+                            Book copies:
+                            <input
+                                disabled={state.fetching}
+                                onChange={bookCopiesInput}
+                                value={copies}
+                                type="number"
+                                name="book_copies"
+                            />
+                        </label>
+                    </form>
+                    <div className="button-wrapper">
+                        <button disabled={state.fetching} onClick={submitBook}>
+                            Submit book
+                        </button>
+                    </div>
                 </div>
             )}
+
             <style jsx>{`
                 .results-form {
                     display: flex;

@@ -94,4 +94,8 @@ contract BookLibraryContract is Ownable {
     {
         return BookStorage[_id].borrowedUserIds;
     }
+
+    function isBookBorrowed(bytes32 uid) public view returns (bool){
+        return isBorrowed[msg.sender][uid];
+    }
 }

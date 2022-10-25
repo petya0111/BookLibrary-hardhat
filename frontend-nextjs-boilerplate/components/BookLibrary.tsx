@@ -52,7 +52,6 @@ const BookLibrary = ({ contractAddress }: BookContract) => {
                     rented: bookBorrowed,
                 });
             }
-            console.log(arr);
             setBooks(arr);
         }
     };
@@ -74,7 +73,7 @@ const BookLibrary = ({ contractAddress }: BookContract) => {
             dispatch({
                 type: "fetched",
                 messageType: "success",
-                message: "Successfully submitted state result",
+                message: `Added book ${name} to library`,
             });
             getAllBooks();
         } else {

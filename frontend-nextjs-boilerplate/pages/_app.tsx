@@ -1,6 +1,6 @@
 import { useWeb3React, Web3ReactProvider } from "@web3-react/core";
 import type { AppProps } from "next/app";
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useReducer, useState } from "react";
 import getLibrary from "../getLibrary";
 import "../styles/globals.css";
 import { Contract } from "ethers";
@@ -10,6 +10,7 @@ import {
     Box,
     LinearProgress,
     Link,
+    Snackbar,
     Stack,
     Typography,
 } from "@mui/material";
@@ -83,10 +84,25 @@ export const Web3Context = createContext<{
 
 function NextWeb3App({ Component, pageProps }: AppProps) {
     const [state, dispatch] = useReducer(web3Reducer, initialState);
+    const [openState, setOpenState] = useState(false);
+  
     return (
         <Web3Context.Provider value={{ state, dispatch }}>
             <Web3ReactProvider getLibrary={getLibrary}>
                 <Component disabled={state.fetching} {...pageProps} />
+                {state.messageType == "success" && (
+                    <Snackbar
+                        style={{
+                            position: "absolute",
+                            bottom: 10,
+                            width: "100%",
+                        }}
+                        open={true}
+                        onClose={() => setOpenState(false)}
+                        autoHideDuration={3000}
+                        message={state.message}
+                    ></Snackbar>
+                )}
                 {state.fetching && (
                     <Box
                         style={{

@@ -23,7 +23,7 @@ const TableBooks = ({ books, bookLibraryContract, getBooksFunction }) => {
             dispatch({
                 type: "fetched",
                 messageType: "success",
-                message: "Successfully submitted state result",
+                message: `Borrowed book from library.`,
             });
             getBooksFunction();
         } else {
@@ -45,7 +45,7 @@ const TableBooks = ({ books, bookLibraryContract, getBooksFunction }) => {
             dispatch({
                 type: "fetched",
                 messageType: "success",
-                message: "Successfully submitted state result",
+                message: `Returned book to library.`,
             });
             getBooksFunction();
         } else {

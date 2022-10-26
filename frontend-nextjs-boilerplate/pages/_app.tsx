@@ -37,7 +37,8 @@ export type Web3Action =
           web3Provider: any;
       }
     | { type: "fetching"; transactionHash?: string }
-    | { type: "fetched"; messageType?: AlertColor; message?: string };
+    | { type: "fetched"; messageType?: AlertColor; message?: string }
+    | { type: "removeMessage" };
 
 const initialState: Web3State = {
     fetching: false,
@@ -72,9 +73,10 @@ function web3Reducer(state: Web3State, action: Web3Action): Web3State {
                 messageType: action.messageType,
             };
         }
+        case "removeMessage": {
+            return { ...state, messageType: undefined, message: undefined };
+        }
     }
-
-    return state;
 }
 
 export const Web3Context = createContext<{
@@ -85,23 +87,25 @@ export const Web3Context = createContext<{
 function NextWeb3App({ Component, pageProps }: AppProps) {
     const [state, dispatch] = useReducer(web3Reducer, initialState);
     const [openState, setOpenState] = useState(false);
-  
+
     return (
         <Web3Context.Provider value={{ state, dispatch }}>
             <Web3ReactProvider getLibrary={getLibrary}>
                 <Component disabled={state.fetching} {...pageProps} />
                 {state.messageType == "success" && (
                     <Snackbar
-                        style={{
-                            position: "absolute",
-                            bottom: 10,
-                            width: "100%",
-                        }}
-                        open={true}
-                        onClose={() => setOpenState(false)}
-                        autoHideDuration={3000}
-                        message={state.message}
-                    ></Snackbar>
+                        open={state.message !== undefined}
+                        autoHideDuration={5000}
+                        onClose={() => dispatch({ type: "removeMessage" })}
+                    >
+                        <Alert
+                            onClose={() => dispatch({ type: "removeMessage" })}
+                            severity={state.messageType}
+                            sx={{ width: "100%" }}
+                        >
+                            {state.message}
+                        </Alert>
+                    </Snackbar>
                 )}
                 {state.fetching && (
                     <Box

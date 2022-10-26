@@ -66,24 +66,32 @@ const BookLibrary = ({ contractAddress }: BookContract) => {
 
     const submitBook = async () => {
         dispatch({ type: "fetching" });
-        const tx = await bookLibraryContract.addNewBook(name, copies);
-        dispatch({ type: "fetching", transactionHash: tx.hash });
-        const transactionReceipt = await tx.wait();
-        if (transactionReceipt.status === 1) {
-            dispatch({
-                type: "fetched",
-                messageType: "success",
-                message: `Added book ${name} to library`,
-            });
-            getAllBooks();
-        } else {
+        try {
+            const tx = await bookLibraryContract.addNewBook(name, copies);
+            dispatch({ type: "fetching", transactionHash: tx.hash });
+            const transactionReceipt = await tx.wait();
+            if (transactionReceipt.status === 1) {
+                dispatch({
+                    type: "fetched",
+                    messageType: "success",
+                    message: `Added book ${name} to library`,
+                });
+                getAllBooks();
+            } else {
+                dispatch({
+                    type: "fetched",
+                    messageType: "error",
+                    message: JSON.stringify(transactionReceipt),
+                });
+            }
+            resetForm();
+        } catch (e) {
             dispatch({
                 type: "fetched",
                 messageType: "error",
-                message: JSON.stringify(transactionReceipt),
+                message: JSON.stringify(e.error.message),
             });
         }
-        resetForm();
     };
 
     const resetForm = async () => {

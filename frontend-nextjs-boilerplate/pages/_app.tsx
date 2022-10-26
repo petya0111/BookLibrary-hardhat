@@ -92,21 +92,20 @@ function NextWeb3App({ Component, pageProps }: AppProps) {
         <Web3Context.Provider value={{ state, dispatch }}>
             <Web3ReactProvider getLibrary={getLibrary}>
                 <Component disabled={state.fetching} {...pageProps} />
-                {state.messageType == "success" && (
-                    <Snackbar
-                        open={state.message !== undefined}
-                        autoHideDuration={5000}
+                <Snackbar
+                    open={state.message !== undefined}
+                    autoHideDuration={5000}
+                    onClose={() => dispatch({ type: "removeMessage" })}
+                >
+                    <Alert
                         onClose={() => dispatch({ type: "removeMessage" })}
+                        severity={state.messageType}
+                        sx={{ width: "100%" }}
                     >
-                        <Alert
-                            onClose={() => dispatch({ type: "removeMessage" })}
-                            severity={state.messageType}
-                            sx={{ width: "100%" }}
-                        >
-                            {state.message}
-                        </Alert>
-                    </Snackbar>
-                )}
+                        {state.message}
+                    </Alert>
+                </Snackbar>
+
                 {state.fetching && (
                     <Box
                         style={{

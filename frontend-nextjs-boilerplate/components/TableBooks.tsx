@@ -16,46 +16,62 @@ const TableBooks = ({ books, bookLibraryContract, getBooksFunction }) => {
     const { state, dispatch } = useContext(Web3Context);
     const rentBook = async (id) => {
         dispatch({ type: "fetching" });
-        const tx = await bookLibraryContract.borrowBook(id);
-        dispatch({ type: "fetching", transactionHash: tx.hash });
-        const transactionReceipt = await tx.wait();
-        if (transactionReceipt.status === 1) {
-            dispatch({
-                type: "fetched",
-                messageType: "success",
-                message: `Borrowed book from library.`,
-            });
+        try {
+            const tx = await bookLibraryContract.borrowBook(id);
+            dispatch({ type: "fetching", transactionHash: tx.hash });
+            const transactionReceipt = await tx.wait();
+            if (transactionReceipt.status === 1) {
+                dispatch({
+                    type: "fetched",
+                    messageType: "success",
+                    message: `Borrowed book from library.`,
+                });
+                getBooksFunction();
+            } else {
+                dispatch({
+                    type: "fetched",
+                    messageType: "error",
+                    message: JSON.stringify(transactionReceipt),
+                });
+            }
             getBooksFunction();
-        } else {
+        } catch (e) {
             dispatch({
                 type: "fetched",
                 messageType: "error",
-                message: JSON.stringify(transactionReceipt),
+                message: JSON.stringify(e.error.message),
             });
         }
-        getBooksFunction();
     };
 
     const returnBook = async (id) => {
         dispatch({ type: "fetching" });
-        const tx = await bookLibraryContract.returnBook(id);
-        dispatch({ type: "fetching", transactionHash: tx.hash });
-        const transactionReceipt = await tx.wait();
-        if (transactionReceipt.status === 1) {
-            dispatch({
-                type: "fetched",
-                messageType: "success",
-                message: `Returned book to library.`,
-            });
+        try {
+            const tx = await bookLibraryContract.returnBook(id);
+            dispatch({ type: "fetching", transactionHash: tx.hash });
+            const transactionReceipt = await tx.wait();
+            if (transactionReceipt.status === 1) {
+                dispatch({
+                    type: "fetched",
+                    messageType: "success",
+                    message: `Returned book to library.`,
+                });
+                getBooksFunction();
+            } else {
+                dispatch({
+                    type: "fetched",
+                    messageType: "error",
+                    message: JSON.stringify(transactionReceipt),
+                });
+            }
             getBooksFunction();
-        } else {
+        } catch (e) {
             dispatch({
                 type: "fetched",
                 messageType: "error",
-                message: JSON.stringify(transactionReceipt),
+                message: JSON.stringify(e.error.message),
             });
         }
-        getBooksFunction();
     };
 
     return (

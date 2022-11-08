@@ -9,7 +9,7 @@ const { developmentChains } = require("../hardhat.config")
     let bookCopies = 50;
     let bookLibrary;
     before(async () => {
-        let  bookLibraryFactory = await ethers.getContractFactory("Library");
+        let  bookLibraryFactory = await ethers.getContractFactory("BookLibraryContract");
         bookLibrary = await bookLibraryFactory.deploy();
         const [owner, addr1] = await ethers.getSigners();
         await bookLibrary.deployed({ from: owner });
@@ -82,6 +82,16 @@ const { developmentChains } = require("../hardhat.config")
                 bookLibrary,
                 "Library__NoCopiesLeft"
             );
+        });
+
+        it("Should check if borrowed", async function () {
+            const [owner, addr1, addr2] = await ethers.getSigners();
+            const allBookIds = await bookLibrary.getAllBookIds();
+            
+            const firstBook=await bookLibrary.connect(addr1).isBookBorrowed(allBookIds[0]);
+            const secondBook = await bookLibrary.connect(addr1).isBookBorrowed(allBookIds[1]);
+            expect(firstBook).to.equal(true);
+            expect(secondBook).to.equal(false);
         });
 
         it("Should throw NotBorrowed if the book is returned but not borrowed again", async function () {
